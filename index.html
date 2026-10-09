@@ -145,14 +145,24 @@ const LV_IP=st([
  {min:40,s:[[15,U],[16,G],[17,'25'],[30,S],[33,'25'],[36,'50'],[X,U]]},
  {min:50,s:[[15,U],[16,G],[17,'25'],[32,S],[35,'25'],[37,'50'],[X,U]]}]);
 
-// Guardian: life only, ages 18-64, bands on unrounded BMI (e.g. 16 to 16.999)
-const GU_STEPS=st([
- {min:0, s:[[X,U]]},
+// Guardian: ages 18-64 (IP 18-59), bands on unrounded BMI (e.g. 16 to 16.999)
+const gu=bands=>{const f=st([{min:0,s:[[X,U]]},...bands]);return (age,raw)=>f(age,Math.floor(raw));};
+const GU_LIFE=gu([
  {min:18,s:[[15,U],[16,'50'],[30,S],[32,'25'],[34,'50'],[36,'75'],[38,'100'],[40,'150'],[41,'175'],[X,U]]},
  {min:31,s:[[15,U],[16,'75'],[17,'50'],[31,S],[33,'25'],[36,'50'],[38,'75'],[41,'100'],[X,U]]},
  {min:50,s:[[15,U],[16,'100'],[17,'50'],[33,S],[36,'25'],[38,'50'],[40,'75'],[41,'100'],[X,U]]},
  {min:65,s:[[X,U]]}]);
-const GU_LIFE=(age,raw)=>GU_STEPS(age,Math.floor(raw));
+// Critical Illness Essentials and Life & CI Essentials share one table
+const GU_CI=gu([
+ {min:18,s:[[16,U],[17,'50'],[29,S],[30,'25'],[32,'50'],[34,'75'],[36,'100'],[37,'125'],[X,U]]},
+ {min:31,s:[[16,U],[17,'50'],[29,S],[31,'25'],[33,'50'],[35,'75'],[37,'100'],[X,U]]},
+ {min:50,s:[[16,U],[17,'50'],[31,S],[33,'25'],[34,'50'],[36,'75'],[37,'100'],[38,'125'],[X,U]]},
+ {min:65,s:[[X,U]]}]);
+const GU_IP=gu([
+ {min:18,s:[[16,U],[29,S],[32,'25'],[34,'50'],[37,'75'],[X,U]]},
+ {min:31,s:[[16,U],[30,S],[33,'25'],[36,'50'],[38,'75'],[X,U]]},
+ {min:50,s:[[16,U],[32,S],[35,'25'],[37,'50'],[39,'75'],[X,U]]},
+ {min:60,s:[[X,U]]}]);
 
 // Vitality: age next birthday, BMI to 1dp. u = unavailable below, l = low loading below, h = high loading from, x = unavailable from
 function vt(bands){return (age,raw)=>{
@@ -178,11 +188,13 @@ const POLICIES=[
    rl:{fn:rl(RL_CI,B69,69),label:'CIC / Life & CIC',note:(b,c)=>+c>75?'Rating over 75%: '+MINI:''},
    av:{fn:AV_CI,label:'CI & TPD',note:b=>b===29?'TPD on standard rates at BMI 29.':''},
    lv:{fn:LV_CI,note:(b,c)=>c===G?'GPR required.':''},
+   gu:{fn:GU_CI,raw:true,label:'Essentials',note:()=>''},
    vi:{fn:VI_SIC,raw:true,label:'Serious Illness Cover',note:VNOTE}}},
  {name:'Income Protection',p:{
    rl:{fn:rl(RL_IP,B69,69),note:(b,c)=>+c>75?'Rating over 75%: '+MINI:''},
    av:{fn:AV_IP,note:(b,c)=>c.endsWith('m')?'Nurse screen required (cholesterol check, or full blood profile at 50+). Rating is indicative.':c===T?'Tele-underwriting required.':''},
    lv:{fn:LV_IP,note:(b,c)=>c===G?'GPR required.':''},
+   gu:{fn:GU_IP,raw:true,note:(b,c,raw)=>c===S&&Math.floor(raw)===17?'Guardian may ask for medical evidence at BMI 17.':''},
    vi:{fn:VI_IP,raw:true,note:VNOTE}}},
  {name:'Waiver of Premium',p:{
    rl:{fn:rl(RL_WOP,B70,Infinity),note:()=>''},
@@ -228,7 +240,7 @@ function calc(){
   res.forEach((x,i)=>{
    const isBest=best.includes(x);
    if(!x.d){sections+=`<div class="prow"${i===0?' style="border-top:0"':''}><div class="ph"><span class="pname"><i style="background:${x.pr.dot}"></i>${x.pr.name}</span></div><div class="none">No BMI table in guide for this cover.</div></div>`;return;}
-   const note=x.d.note(b,x.c);
+   const note=x.d.note(b,x.c,raw);
    sections+=`<div class="prow${isBest?' best':''}"${i===0&&!isBest?' style="border-top:0"':''}>
     <div class="ph"><span class="pname"><i style="background:${x.pr.dot}"></i>${x.pr.name}${x.d.label?` <span class="sub">${x.d.label}</span>`:''}${isBest?' <span class="badge">Best</span>':''}</span>
     <span class="chip" style="background:${colour(x.c)}">${label(x.c)}</span></div>
