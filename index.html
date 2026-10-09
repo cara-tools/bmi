@@ -4,18 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BMI Underwriting Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#17324d;--brand2:#0f7c7a;--accent:#0f7c7a;--std:#2e7d4f;--mid:#b8860b;--high:#e0620d;--no:#3a3a3a;--refer:#2f6aa8;
+:root{--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#2271B5;--brand2:#2271B5;--accent:#2271B5;--std:#2e7d4f;--mid:#b8860b;--high:#e0620d;--no:#3a3a3a;--refer:#2f6aa8;
   color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--brand)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#17324d}}
-:root[data-theme="dark"]{--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#17324d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#2271B5}}
+:root[data-theme="dark"]{--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#2271B5}
 *,*::before,*::after{box-sizing:border-box}[hidden]{display:none!important}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100%}
-header{background:var(--brand);color:#fff;padding:18px 20px 16px;border-bottom:4px solid var(--brand2)}
-header .kicker{font-family:Georgia,"Times New Roman",serif;font-size:.95rem;opacity:.85;margin:0 0 2px}
-header h1{font-size:1.35rem;margin:0;font-weight:800;letter-spacing:-.01em}
-header p{margin:4px 0 0;font-size:.8rem;opacity:.85}
+body{margin:0;font-family:"Ubuntu",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100%}
+header{background:#fff;color:var(--text);padding:14px 20px 14px;border-bottom:4px solid transparent;border-image:linear-gradient(90deg,#dae818,#f422b6) 1}
+header .logo{display:block;height:52px;width:auto;margin:0 0 8px}
+header h1{font-size:1.35rem;margin:0;font-weight:700;letter-spacing:-.01em;color:var(--brand)}
+header p{margin:4px 0 0;font-size:.8rem;color:var(--muted)}
 main{max-width:900px;margin:0 auto;padding:16px}
 .card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:8px;padding:16px;margin-bottom:16px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
@@ -52,7 +53,7 @@ footer strong{display:block;margin-bottom:6px;font-size:.78rem}
 </head>
 <body>
 <header>
-  <div class="kicker">Protection</div>
+  <img class="logo" src="logo.svg" alt="CARA Mortgage Services">
   <h1>BMI Underwriting Comparison</h1>
   <p>Royal London (June 2026), Aviva (Feb 2025), LV= (Aug 2025) and Guardian BMI tables</p>
 </header>
