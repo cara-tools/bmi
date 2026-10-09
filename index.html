@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BMI Underwriting Comparison</title>
+<style>
+:root{--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#17324d;--brand2:#0f7c7a;--accent:#0f7c7a;--std:#2e7d4f;--mid:#b8860b;--high:#e0620d;--no:#3a3a3a;--refer:#2f6aa8;
+  color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--brand)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#17324d}}
+:root[data-theme="dark"]{--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#17324d}
+*,*::before,*::after{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100%}
+header{background:var(--brand);color:#fff;padding:18px 20px 16px;border-bottom:4px solid var(--brand2)}
+header .kicker{font-family:Georgia,"Times New Roman",serif;font-size:.95rem;opacity:.85;margin:0 0 2px}
+header h1{font-size:1.35rem;margin:0;font-weight:800;letter-spacing:-.01em}
+header p{margin:4px 0 0;font-size:.8rem;opacity:.85}
+main{max-width:900px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:8px;padding:16px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+label{font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px}
+input{width:100%;padding:12px 10px;border:1px solid var(--line);border-radius:6px;background:var(--tint);color:var(--text);font-size:16px}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.pair{display:flex;gap:6px}
+.toggle{display:flex;gap:6px;margin-bottom:14px}
+.toggle button{flex:1;padding:10px 8px;border:1px solid var(--line);border-radius:6px;background:var(--tint);color:var(--brand);cursor:pointer;font-size:.9rem;font-weight:600}
+.toggle button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.bmi{font-size:1.7rem;font-weight:800;color:var(--brand)}
+.sub{font-size:.85rem;color:var(--muted);line-height:1.45}
+h2{font-size:1.05rem;color:var(--brand);margin:0 0 6px}
+.sumrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.sumrow:first-of-type{border-top:0}
+.sumrow .pol{font-weight:600}
+.sumrow .who{font-size:.85rem;color:var(--muted);text-align:right}
+.sumrow .who b{color:var(--brand)}
+.prow{padding:12px 0;border-top:1px solid var(--line)}
+.prow.best{border-left:4px solid var(--accent);background:var(--tint);margin:0 -16px;padding:12px 16px 12px 12px}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pname{font-weight:700;display:flex;align-items:center;gap:6px}
+.pname i{display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.badge{background:var(--accent);color:#fff;font-size:.68rem;padding:2px 8px;border-radius:999px;font-weight:700}
+.chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:600;font-size:.82rem;white-space:nowrap}
+.move{font-size:.85rem;color:var(--muted);margin-top:5px;line-height:1.4}
+.move b{color:var(--text)}
+.better{color:var(--std);font-weight:600}.worse{color:#b3261e;font-weight:600}.side{color:var(--refer);font-weight:600}
+.flag{font-size:.8rem;color:var(--high);margin-top:5px}
+.none{font-size:.85rem;color:var(--muted);font-style:italic}
+footer{font-size:.75rem;color:#fff;background:var(--brand);text-align:center;padding:16px 16px 30px;line-height:1.45}
+footer strong{display:block;margin-bottom:6px;font-size:.78rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">Protection</div>
+  <h1>BMI Underwriting Comparison</h1>
+  <p>Royal London (June 2026), Aviva (Feb 2025) and LV= (Aug 2025) BMI tables</p>
+</header>
+<main>
+  <div class="card">
+    <div class="toggle">
+      <button id="m" class="on" onclick="setUnits(false)">Metric (cm / kg)</button>
+      <button id="i" onclick="setUnits(true)">Imperial (ft / st)</button>
+    </div>
+    <div class="grid">
+      <div><label for="age">Age</label><input id="age" type="number" min="0" inputmode="numeric"></div>
+      <div class="metric"><label for="cm">Height (cm)</label><input id="cm" type="number" step="0.1" inputmode="decimal"></div>
+      <div class="imp" hidden><label>Height (ft / in)</label><div class="pair">
+        <input id="ft" type="number" placeholder="ft" inputmode="numeric"><input id="in" type="number" step="0.1" placeholder="in" inputmode="decimal"></div></div>
+      <div class="metric"><label for="kg">Weight (kg)</label><input id="kg" type="number" step="0.1" inputmode="decimal"></div>
+      <div class="imp" hidden><label>Weight (st / lb)</label><div class="pair">
+        <input id="st" type="number" placeholder="st" inputmode="numeric"><input id="lb" type="number" step="0.1" placeholder="lb" inputmode="decimal"></div></div>
+    </div>
+  </div>
+  <div id="out"><div class="card"><p class="sub">Enter age, height and weight to compare providers.</p></div></div>
+</main>
+<footer><strong>This is for financial adviser use only and shouldn't be relied upon by any other person.</strong>Ratings transcribed from each provider's adviser guide and assume no other risk factors. BMI rounded .49 and below down, .50 and above up. "Best" ranks firm terms first; GPR or tele-underwriting outcomes rank below any firm loading. Always confirm with the provider's current guide or pre-underwriting tool.</footer>
+<script>
+// ---------- Codes: 'S' standard, 'U' unable/decline, 'T' tele-UW, 'G' GPR, '50' loading, '150m' indicative + screening ----------
+const S='S',U='U',T='T',G='G',X=99;
+
+// Royal London grid tables (columns BMI 16,17,18-29,30,31...)
+const s=0,u=999;
+const RL_LIFE=[
+[50,50,s,25,25,25,50,50,50,50,75,100,125,125,150,175],
+[50,50,s,s,25,25,50,50,50,50,75,100,100,100,125,150],
+[50,50,s,s,25,25,25,50,50,50,50,75,100,100,125,150],
+[50,50,s,s,25,25,25,25,50,50,50,50,75,100,125,150],
+[50,50,s,s,s,25,25,25,50,50,50,50,75,100,125,150],
+[50,50,s,s,s,s,25,25,25,25,50,50,50,75,100,100],
+[50,50,s,s,s,s,25,25,25,25,50,50,50,75,100,100],
+[50,50,s,s,s,s,s,25,25,25,50,50,50,75,75,100],
+[50,50,s,s,s,s,s,25,25,25,50,50,50,50,75,100]];
+const RL_WOP=RL_LIFE.map((r,i)=>i===0?[...r.slice(0,15),u]:r);
+const RL_CI=[
+[50,50,s,25,25,25,50,50,75,75,100,125,150,u],
+[50,50,s,25,25,25,50,50,50,75,75,100,125,150],
+[50,50,s,s,25,25,50,50,50,50,75,75,100,125],
+[50,50,s,s,25,25,50,50,50,50,75,75,100,125],
+[50,50,s,s,25,25,25,50,50,50,75,75,100,125],
+[50,50,s,s,s,25,25,25,50,50,50,75,100,125],
+[50,50,s,s,s,25,25,25,25,50,50,75,75,100],
+[50,50,s,s,s,s,25,25,25,50,50,75,75,100]];
+const RL_IP=[[50,50,s,25,25,50,50,50,75,75,100,125,u,u],[50,50,s,25,25,25,50,50,50,75,75,100,125,u],...RL_CI.slice(2)];
+const B70=[17,30,35,40,45,50,55,60,70],B69=[17,30,35,40,45,50,55,60];
+function rl(rows,bands,maxAge){return (age,b)=>{
+  if(age<17||age>maxAge||b<=15)return U;
+  let i=0;bands.forEach((st,k)=>{if(age>=st)i=k;});
+  const idx=b===16?0:b===17?1:b<=29?2:b-27;const v=rows[i][idx];
+  return v===undefined||v===u?U:v===s?S:String(v);};}
+
+// Step tables: bands [{min age, s:[[upToBMI, code],...]}]
+function st(bands){return (age,b)=>{
+  if(age<17)return U;let band=null;for(const bd of bands)if(age>=bd.min)band=bd;
+  if(!band)return U;for(const [up,c] of band.s)if(b<=up)return c;return U;};}
+
+// Aviva
+const AV_LIFE=st([
+ {min:0, s:[[15,U],[16,T],[17,'50'],[30,S],[33,'25'],[36,'50'],[37,'75'],[38,'100'],[39,'125'],[40,'150'],[42,'150m'],[43,'200m'],[44,'225m'],[45,'250m'],[X,U]]},
+ {min:31,s:[[15,U],[16,T],[17,'50'],[32,S],[34,'25'],[37,'50'],[39,'75'],[40,'100'],[42,'150m'],[43,'175m'],[44,'200m'],[45,'225m'],[X,U]]},
+ {min:50,s:[[15,U],[16,T],[17,'50'],[33,S],[36,'25'],[38,'50'],[39,'75'],[40,'100'],[42,'100m'],[43,'125m'],[44,'150m'],[45,'175m'],[X,U]]}]);
+const AV_CI=st([
+ {min:0, s:[[16,U],[17,'50'],[28,S],[31,'25'],[34,'50'],[37,'100'],[39,'125'],[X,U]]},
+ {min:60,s:[[16,U],[17,'50'],[29,S],[31,'25'],[34,'50'],[37,'100'],[39,'125'],[X,U]]}]);
+const AV_IP_BANDS=[
+ {min:0, s:[[15,U],[17,T],[30,S],[32,'25'],[34,'50'],[37,'75'],[38,'100m'],[X,U]]},
+ {min:31,s:[[15,U],[17,T],[32,S],[33,'25'],[36,'50'],[38,'75'],[39,'100m'],[X,U]]},
+ {min:50,s:[[15,U],[17,T],[33,S],[35,'25'],[37,'50'],[39,'75'],[40,'100m'],[X,U]]}];
+const AV_IP=st(AV_IP_BANDS);
+const AV_WOP=st(AV_IP_BANDS.map(bd=>({min:bd.min,s:bd.s.map(([a,c])=>[a,c==='100m'?'100':c])})));
+
+// LV=
+const LV_LIFE=st([
+ {min:0, s:[[15,U],[16,G],[29,S],[33,'25'],[38,'50'],[40,'75'],[41,'100'],[X,U]]},
+ {min:40,s:[[15,U],[16,G],[17,'25'],[30,S],[35,'25'],[39,'50'],[41,'75'],[X,U]]},
+ {min:50,s:[[15,U],[16,G],[17,'25'],[33,S],[37,'25'],[40,'50'],[41,'75'],[X,U]]},
+ {min:60,s:[[15,U],[16,G],[18,'25'],[35,S],[39,'25'],[41,'50'],[X,U]]}]);
+const LV_CI=st([
+ {min:0, s:[[15,U],[16,G],[29,S],[32,'25'],[35,'50'],[37,'75'],[X,U]]},
+ {min:40,s:[[15,U],[16,G],[17,'25'],[29,S],[32,'25'],[36,'50'],[38,'75'],[X,U]]},
+ {min:50,s:[[15,U],[16,G],[17,'25'],[29,S],[34,'25'],[37,'50'],[38,'75'],[39,'100'],[X,U]]},
+ {min:60,s:[[15,U],[16,G],[18,'25'],[29,S],[34,'25'],[37,'50'],[39,'75'],[X,U]]}]);
+const LV_IP=st([
+ {min:0, s:[[15,U],[16,G],[17,'25'],[29,S],[31,'25'],[34,'50'],[36,'75'],[X,U]]},
+ {min:40,s:[[15,U],[16,G],[17,'25'],[30,S],[33,'25'],[36,'50'],[X,U]]},
+ {min:50,s:[[15,U],[16,G],[17,'25'],[32,S],[35,'25'],[37,'50'],[X,U]]}]);
+
+// Vitality: age next birthday, BMI to 1dp. u = unavailable below, l = low loading below, h = high loading from, x = unavailable from
+function vt(bands){return (age,raw)=>{
+  if(age<17)return U;const anb=age+1;let bd=bands[0];for(const z of bands)if(anb>=z.min)bd=z;
+  const v=Math.round(raw*10)/10;
+  if(v<bd.u)return U;if(v<bd.l)return 'L';if(v<bd.h)return S;if(v<bd.x)return 'L';return U;};}
+const VI_LIFE=vt([{min:0,u:16.5,l:17,h:29.5,x:40.5},{min:31,u:16.5,l:17,h:30.5,x:40.5},{min:51,u:16.5,l:18.5,h:31.5,x:40.5},{min:61,u:16.5,l:19.5,h:32.5,x:40.5},{min:71,u:17.5,l:20.5,h:33.5,x:40.5}]);
+const VI_IP=vt([{min:0,u:16.5,l:17,h:29.5,x:40.5},{min:41,u:16.5,l:17,h:30.5,x:40.5},{min:51,u:16.5,l:17,h:31.5,x:40.5},{min:61,u:16.5,l:17,h:32.5,x:40.5}]);
+const VI_SIC=vt([{min:0,u:17,l:18.5,h:28.5,x:38.5},{min:31,u:17,l:18.5,h:29.5,x:40.5},{min:41,u:17,l:18.5,h:30.5,x:40.5},{min:61,u:17,l:18.5,h:31.5,x:40.5}]);
+const VNOTE=(b,c)=>c==='L'?'Loadings start at +27.5% and rise with BMI. Use Spectra for the exact loading.':'';
+const get=(d,age,raw)=>d.raw?d.fn(age,raw):d.fn(age,Math.floor(raw+0.5));
+
+const MINI='miniscreen may be requested (with cotinine test if not on smoker rates).';
+const PROVIDERS=[{id:'rl',name:'Royal London',dot:'#520f53'},{id:'av',name:'Aviva',dot:'#ffd900'},{id:'lv',name:'LV=',dot:'#5cb82e'}];
+const POLICIES=[
+ {name:'Life Cover',p:{
+   rl:{fn:rl(RL_LIFE,B70,Infinity),note:b=>b>40?'BMI over 40: '+MINI:''},
+   av:{fn:AV_LIFE,note:(b,c)=>c.endsWith('m')?'Mini screening/biochemistry (blood test) required. Rating is indicative.':c===T?'Tele-underwriting required.':''},
+   lv:{fn:LV_LIFE,note:(b,c)=>c===G?'GPR required.':''},
+   vi:{fn:VI_LIFE,raw:true,note:VNOTE}}},
+ {name:'Critical Illness',p:{
+   rl:{fn:rl(RL_CI,B69,69),label:'CIC / Life & CIC',note:(b,c)=>+c>75?'Rating over 75%: '+MINI:''},
+   av:{fn:AV_CI,label:'CI & TPD',note:b=>b===29?'TPD on standard rates at BMI 29.':''},
+   lv:{fn:LV_CI,note:(b,c)=>c===G?'GPR required.':''},
+   vi:{fn:VI_SIC,raw:true,label:'Serious Illness Cover',note:VNOTE}}},
+ {name:'Income Protection',p:{
+   rl:{fn:rl(RL_IP,B69,69),note:(b,c)=>+c>75?'Rating over 75%: '+MINI:''},
+   av:{fn:AV_IP,note:(b,c)=>c.endsWith('m')?'Nurse screen required (cholesterol check, or full blood profile at 50+). Rating is indicative.':c===T?'Tele-underwriting required.':''},
+   lv:{fn:LV_IP,note:(b,c)=>c===G?'GPR required.':''},
+   vi:{fn:VI_IP,raw:true,note:VNOTE}}},
+ {name:'Waiver of Premium',p:{
+   rl:{fn:rl(RL_WOP,B70,Infinity),note:()=>''},
+   av:{fn:AV_WOP,note:(b,c)=>c==='100'&&b>=38?'No medical evidence for WOP. Rating applied only.':c===T?'Tele-underwriting required.':''},
+   lv:null,
+   vi:null}}
+];
+
+const rank=c=>c===S?0:c===U?999:c==='L'?27.5:(c===T||c===G)?300:parseInt(c)+(c.endsWith('m')?1:0);
+const label=c=>c===S?'Standard':c===U?'Unable to offer':c==='L'?'+27.5% or more':c===T?'Tele-UW':c===G?'GPR required':`+${parseInt(c)}%${c.endsWith('m')?' (ind.)':''}`;
+const colour=c=>c===S?'var(--std)':c===U?'var(--no)':c==='L'?'var(--mid)':(c===T||c===G)?'var(--refer)':parseInt(c)<=50?'var(--mid)':'var(--high)';
+
+let imperial=false;
+const $=id=>document.getElementById(id);
+const num=id=>parseFloat($(id).value)||0;
+function setUnits(imp){imperial=imp;$('m').classList.toggle('on',!imp);$('i').classList.toggle('on',imp);
+ document.querySelectorAll('.metric').forEach(e=>e.hidden=imp);document.querySelectorAll('.imp').forEach(e=>e.hidden=!imp);calc();}
+const heightM=()=>imperial?(num('ft')*12+num('in'))*0.0254:num('cm')/100;
+const weightKg=()=>imperial?(num('st')*14+num('lb'))*0.45359237:num('kg');
+const roundBMI=raw=>Math.floor(raw+0.5);
+function fmtW(kg){if(!imperial)return kg.toFixed(1)+' kg';const lb=kg/0.45359237,stn=Math.floor(lb/14);return `${stn}st ${(lb-stn*14).toFixed(1)}lb`;}
+function cls(n,c){const a=rank(n),b=rank(c);return a<b?'better':a>b?'worse':'side';}
+
+function moves(d,age,raw,h,w,cur){const out=[],r0=Math.round(raw*100);
+ for(let k=r0-1;k>=1200;k--){const r=get(d,age,k/100);if(r!==cur){const t=((k+1)/100)*h*h;
+  out.push(`↓ <b>Under ${fmtW(t)}</b> (lose ~${fmtW(w-t)}) gives <span class="${cls(r,cur)}">${label(r)}</span>`);break;}}
+ for(let k=r0+1;k<=6000;k++){const r=get(d,age,k/100);if(r!==cur){const t=(k/100)*h*h;
+  out.push(`↑ <b>${fmtW(t)} or more</b> (gain ~${fmtW(t-w)}) gives <span class="${cls(r,cur)}">${label(r)}</span>`);break;}}
+ return out.map(m=>`<div class="move">${m}</div>`).join('');}
+
+function calc(){
+ const age=parseInt($('age').value),h=heightM(),w=weightKg(),out=$('out');
+ if(!(age>0&&h>0&&w>0)){out.innerHTML='<div class="card"><p class="sub">Enter age, height and weight to compare providers.</p></div>';return;}
+ const raw=w/(h*h),b=roundBMI(raw);
+ let summary='',sections='';
+ POLICIES.forEach(pol=>{
+  const res=PROVIDERS.map(pr=>{const d=pol.p[pr.id];if(!d)return {pr,d:null};const c=get(d,age,raw);return {pr,d,c,r:rank(c)};});
+  const avail=res.filter(x=>x.d);const min=Math.min(...avail.map(x=>x.r));
+  const best=min<999?avail.filter(x=>x.r===min):[];
+  summary+=`<div class="sumrow"><span class="pol">${pol.name}</span><span class="who">${best.length?`<b>${best.map(x=>x.pr.name).join(' / ')}</b><br>${label(best[0].c)}${best.length>1?' (joint)':''}`:'<b>No provider</b><br>Unable to offer'}</span></div>`;
+  sections+=`<div class="card"><h2>${pol.name}</h2>`;
+  res.forEach((x,i)=>{
+   const isBest=best.includes(x);
+   if(!x.d){sections+=`<div class="prow"${i===0?' style="border-top:0"':''}><div class="ph"><span class="pname"><i style="background:${x.pr.dot}"></i>${x.pr.name}</span></div><div class="none">No BMI table in guide for this cover.</div></div>`;return;}
+   const note=x.d.note(b,x.c);
+   sections+=`<div class="prow${isBest?' best':''}"${i===0&&!isBest?' style="border-top:0"':''}>
+    <div class="ph"><span class="pname"><i style="background:${x.pr.dot}"></i>${x.pr.name}${x.d.label?` <span class="sub">${x.d.label}</span>`:''}${isBest?' <span class="badge">Best</span>':''}</span>
+    <span class="chip" style="background:${colour(x.c)}">${label(x.c)}</span></div>
+    ${moves(x.d,age,raw,h,w,x.c)}${note?`<div class="flag">⚠ ${note}</div>`:''}</div>`;
+  });
+  sections+='</div>';
+ });
+ out.innerHTML=`<div class="card"><div class="bmi">BMI ${raw.toFixed(2)}</div>
+  <div class="sub">Rounded for underwriting: <b>${b}</b><br>Height ${(h*100).toFixed(1)} cm, weight ${fmtW(w)}, age ${age}</div></div>
+  <div class="card"><h2>Best provider</h2>${summary}</div>${sections}`;
+}
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',calc));
+</script>
+</body>
+</html>
