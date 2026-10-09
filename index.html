@@ -54,7 +54,7 @@ footer strong{display:block;margin-bottom:6px;font-size:.78rem}
 <header>
   <div class="kicker">Protection</div>
   <h1>BMI Underwriting Comparison</h1>
-  <p>Royal London (June 2026), Aviva (Feb 2025) and LV= (Aug 2025) BMI tables</p>
+  <p>Royal London (June 2026), Aviva (Feb 2025), LV= (Aug 2025) and Guardian BMI tables</p>
 </header>
 <main>
   <div class="card">
@@ -145,6 +145,15 @@ const LV_IP=st([
  {min:40,s:[[15,U],[16,G],[17,'25'],[30,S],[33,'25'],[36,'50'],[X,U]]},
  {min:50,s:[[15,U],[16,G],[17,'25'],[32,S],[35,'25'],[37,'50'],[X,U]]}]);
 
+// Guardian: life only, ages 18-64, bands on unrounded BMI (e.g. 16 to 16.999)
+const GU_STEPS=st([
+ {min:0, s:[[X,U]]},
+ {min:18,s:[[15,U],[16,'50'],[30,S],[32,'25'],[34,'50'],[36,'75'],[38,'100'],[40,'150'],[41,'175'],[X,U]]},
+ {min:31,s:[[15,U],[16,'75'],[17,'50'],[31,S],[33,'25'],[36,'50'],[38,'75'],[41,'100'],[X,U]]},
+ {min:50,s:[[15,U],[16,'100'],[17,'50'],[33,S],[36,'25'],[38,'50'],[40,'75'],[41,'100'],[X,U]]},
+ {min:65,s:[[X,U]]}]);
+const GU_LIFE=(age,raw)=>GU_STEPS(age,Math.floor(raw));
+
 // Vitality: age next birthday, BMI to 1dp. u = unavailable below, l = low loading below, h = high loading from, x = unavailable from
 function vt(bands){return (age,raw)=>{
   if(age<17)return U;const anb=age+1;let bd=bands[0];for(const z of bands)if(anb>=z.min)bd=z;
@@ -157,12 +166,13 @@ const VNOTE=(b,c)=>c==='L'?'Loadings start at +27.5% and rise with BMI. Use Spec
 const get=(d,age,raw)=>d.raw?d.fn(age,raw):d.fn(age,Math.floor(raw+0.5));
 
 const MINI='miniscreen may be requested (with cotinine test if not on smoker rates).';
-const PROVIDERS=[{id:'rl',name:'Royal London',dot:'#520f53'},{id:'av',name:'Aviva',dot:'#ffd900'},{id:'lv',name:'LV=',dot:'#5cb82e'}];
+const PROVIDERS=[{id:'rl',name:'Royal London',dot:'#520f53'},{id:'av',name:'Aviva',dot:'#ffd900'},{id:'lv',name:'LV=',dot:'#5cb82e'},{id:'gu',name:'Guardian',dot:'#3f0d26'}];
 const POLICIES=[
  {name:'Life Cover',p:{
    rl:{fn:rl(RL_LIFE,B70,Infinity),note:b=>b>40?'BMI over 40: '+MINI:''},
    av:{fn:AV_LIFE,note:(b,c)=>c.endsWith('m')?'Mini screening/biochemistry (blood test) required. Rating is indicative.':c===T?'Tele-underwriting required.':''},
    lv:{fn:LV_LIFE,note:(b,c)=>c===G?'GPR required.':''},
+   gu:{fn:GU_LIFE,raw:true,note:()=>''},
    vi:{fn:VI_LIFE,raw:true,note:VNOTE}}},
  {name:'Critical Illness',p:{
    rl:{fn:rl(RL_CI,B69,69),label:'CIC / Life & CIC',note:(b,c)=>+c>75?'Rating over 75%: '+MINI:''},
