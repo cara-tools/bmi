@@ -194,13 +194,14 @@ const heightM=()=>imperial?(num('ft')*12+num('in'))*0.0254:num('cm')/100;
 const weightKg=()=>imperial?(num('st')*14+num('lb'))*0.45359237:num('kg');
 const roundBMI=raw=>Math.floor(raw+0.5);
 function fmtW(kg){if(!imperial)return kg.toFixed(1)+' kg';const lb=kg/0.45359237,stn=Math.floor(lb/14);return `${stn}st ${(lb-stn*14).toFixed(1)}lb`;}
+function fmtDelta(kg){if(!imperial)return Math.ceil(kg)+' kg';const lb=Math.ceil(kg/0.45359237-1e-9),stn=Math.floor(lb/14);return stn?`${stn}st ${lb-stn*14}lb`:`${lb}lb`;}
 function cls(n,c){const a=rank(n),b=rank(c);return a<b?'better':a>b?'worse':'side';}
 
 function moves(d,age,raw,h,w,cur){const out=[],r0=Math.round(raw*100);
  for(let k=r0-1;k>=1200;k--){const r=get(d,age,k/100);if(r!==cur){const t=((k+1)/100)*h*h;
-  out.push(`↓ <b>Under ${fmtW(t)}</b> (lose ~${fmtW(w-t)}) gives <span class="${cls(r,cur)}">${label(r)}</span>`);break;}}
+  out.push(`↓ <b>Under ${fmtW(t)}</b> (lose ${fmtDelta(w-t)}+) gives <span class="${cls(r,cur)}">${label(r)}</span>`);break;}}
  for(let k=r0+1;k<=6000;k++){const r=get(d,age,k/100);if(r!==cur){const t=(k/100)*h*h;
-  out.push(`↑ <b>${fmtW(t)} or more</b> (gain ~${fmtW(t-w)}) gives <span class="${cls(r,cur)}">${label(r)}</span>`);break;}}
+  out.push(`↑ <b>${fmtW(t)} or more</b> (gain ${fmtDelta(t-w)}+) gives <span class="${cls(r,cur)}">${label(r)}</span>`);break;}}
  return out.map(m=>`<div class="move">${m}</div>`).join('');}
 
 function calc(){
