@@ -12,73 +12,84 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#2271B5}}
 :root[data-theme="dark"]{--bg:#ffffff;--card:#ffffff;--text:#16242f;--muted:#566673;--line:#d8e2e8;--tint:#eef4f6;--brand:#2271B5}
 *,*::before,*::after{box-sizing:border-box}[hidden]{display:none!important}
-body{margin:0;font-family:"Ubuntu",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100%}
-header{background:#fff;color:var(--text);padding:14px 20px 14px;border-bottom:4px solid transparent;border-image:linear-gradient(90deg,#dae818,#f422b6) 1}
-header .logo{display:block;height:52px;width:auto;margin:0 0 8px}
-header h1{font-size:1.35rem;margin:0;font-weight:700;letter-spacing:-.01em;color:var(--brand)}
-header p{margin:4px 0 0;font-size:.8rem;color:var(--muted)}
-main{max-width:900px;margin:0 auto;padding:16px}
-.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:8px;padding:16px;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-label{font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px}
-input{width:100%;padding:12px 10px;border:1px solid var(--line);border-radius:6px;background:var(--tint);color:var(--text);font-size:16px}
-input:focus{outline:2px solid var(--accent);outline-offset:1px}
-.pair{display:flex;gap:6px}
-.toggle{display:flex;gap:6px;margin-bottom:8px}
-.toggle button{flex:1;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--tint);color:var(--brand);cursor:pointer;font-size:.9rem;font-weight:600}
-.toggle button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-.bmi{font-size:1.7rem;font-weight:800;color:var(--brand)}
+body{margin:0;font-family:"Ubuntu",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f3f7f9;color:var(--text);min-height:100%;line-height:1.4}
+header{background:#fff;padding:12px 20px;border-bottom:4px solid transparent;border-image:linear-gradient(90deg,#dae818,#f422b6) 1}
+.hin{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:16px}
+header .logo{display:block;height:40px;width:auto;flex:none}
+header h1{font-size:1.2rem;margin:0;font-weight:700;color:var(--brand)}
+header p{margin:2px 0 0;font-size:.76rem;color:var(--muted)}
+main{max-width:960px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(22,36,47,.05)}
+h2{font-size:.95rem;color:var(--brand);margin:0 0 12px;font-weight:700;letter-spacing:.01em}
 .sub{font-size:.85rem;color:var(--muted);line-height:1.45}
-h2{font-size:1.05rem;color:var(--brand);margin:0 0 6px}
-.sumrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
-.sumrow:first-of-type{border-top:0}
-.sumrow .pol{font-weight:600}
-.sumrow .who{font-size:.85rem;color:var(--muted);text-align:right}
-.sumrow .who b{color:var(--brand)}
-.prow{padding:12px 0;border-top:1px solid var(--line)}
-.prow.best{border-left:4px solid var(--accent);background:var(--tint);margin:0 -16px;padding:12px 16px 12px 12px}
-.ph{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.pname{font-weight:700;display:flex;align-items:center;gap:6px}
-.pname i{display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
-.badge{background:var(--accent);color:#fff;font-size:.68rem;padding:2px 8px;border-radius:999px;font-weight:700}
-.chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:600;font-size:.82rem;white-space:nowrap}
-.move{font-size:.85rem;color:var(--muted);margin-top:5px;line-height:1.4}
-.move b{color:var(--text)}
-.better{color:var(--std);font-weight:600}.worse{color:#b3261e;font-weight:600}.side{color:var(--refer);font-weight:600}
-.flag{font-size:.8rem;color:var(--high);margin-top:5px}
-.none{font-size:.85rem;color:var(--muted);font-style:italic}
-.go{width:100%;margin-top:14px;padding:13px;border:0;border-radius:6px;background:var(--accent);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit}
-.go:active{opacity:.85}
-.small{padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--tint);color:var(--brand);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.fgrid .full{grid-column:1/-1}
+@media (max-width:640px){.fgrid{grid-template-columns:1fr}}
+.lab{display:flex;justify-content:space-between;align-items:center;min-height:30px;margin-bottom:6px;font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+input{width:100%;padding:12px 12px;border:1px solid var(--line);border-radius:8px;background:var(--tint);color:var(--text);font-size:16px;font-family:inherit}
+input:focus{outline:2px solid var(--accent);outline-offset:1px;background:#fff}
+.pair{display:flex;gap:8px}
+.seg{display:inline-flex;background:var(--tint);border:1px solid var(--line);border-radius:999px;padding:2px;text-transform:none;letter-spacing:0}
+.seg button{border:0;background:transparent;color:var(--brand);padding:4px 12px;border-radius:999px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit}
+.seg button.on{background:var(--accent);color:#fff}
+.go{width:100%;margin-top:18px;padding:14px;border:0;border-radius:8px;background:var(--accent);color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.02em}
+.go:hover{filter:brightness(1.08)}.go:active{filter:brightness(.92)}
+.small{padding:6px 12px;border:1px solid var(--line);border-radius:6px;background:var(--tint);color:var(--brand);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit}
 .small.del{color:#b3261e}
-.hrow{padding:10px 0;border-top:1px solid var(--line)}
-.hrow:first-of-type{border-top:0}
-.hrow input{padding:7px 8px;font-size:.95rem;font-weight:600;background:#fff}
-.hmeta{font-size:.78rem;color:var(--muted);margin:5px 0;line-height:1.4}
+details.card>summary{cursor:pointer;font-weight:700;color:var(--brand);font-size:.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::after{content:"▾";color:var(--muted)}
+details.card[open]>summary::after{content:"▴"}
+details.card[open]>summary{margin-bottom:10px}
+.hlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.hrow{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--tint)}
+.hrow input{padding:7px 9px;font-size:.95rem;font-weight:700;background:#fff}
+.hmeta{font-size:.76rem;color:var(--muted);margin:6px 0 8px}
 .hbtns{display:flex;gap:6px}
-.hhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-footer{font-size:.75rem;color:#fff;background:var(--brand);text-align:center;padding:16px 16px 30px;line-height:1.45}
-footer strong{display:block;margin-bottom:6px;font-size:.78rem}
+.hero{display:flex;align-items:center;gap:20px;flex-wrap:wrap;background:linear-gradient(135deg,var(--brand),#173f66);color:#fff;border:0}
+.hero .big{font-size:2.6rem;font-weight:700;line-height:1}
+.hero .big small{display:block;font-size:.7rem;font-weight:500;opacity:.8;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.hero .meta{font-size:.88rem;line-height:1.6;opacity:.95}
+.hero .meta b{font-weight:700}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.tile{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--tint)}
+.tile .pol{font-size:.74rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tile .who{font-weight:700;color:var(--brand);margin:4px 0 6px}
+.provs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:10px}
+.prow{border:1px solid var(--line);border-radius:10px;padding:12px}
+.prow.best{border:2px solid var(--accent);background:var(--tint);padding:11px}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:2px}
+.pname{font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pname i{display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.badge{background:var(--accent);color:#fff;font-size:.65rem;padding:2px 8px;border-radius:999px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.chip{padding:4px 11px;border-radius:999px;color:#fff;font-weight:700;font-size:.8rem;white-space:nowrap}
+.move{font-size:.84rem;color:var(--muted);margin-top:7px;line-height:1.4;padding-left:2px}
+.move b{color:var(--text)}
+.better{color:var(--std);font-weight:700}.worse{color:#b3261e;font-weight:700}.side{color:var(--refer);font-weight:700}
+.flag{font-size:.8rem;color:var(--high);margin-top:7px}
+.none{font-size:.85rem;color:var(--muted);font-style:italic;margin-top:4px}
+footer{font-size:.75rem;color:#fff;background:var(--brand);text-align:center;padding:18px 16px 30px;line-height:1.5}
+footer strong{display:block;margin-bottom:6px;font-size:.8rem}
 </style>
 </head>
 <body>
 <header>
-  <img class="logo" src="logo.svg" alt="CARA Mortgage Services">
-  <h1>BMI Underwriting Comparison</h1>
-  <p>Royal London (June 2026), Aviva (Feb 2025), LV= (Aug 2025) and Guardian BMI tables</p>
+  <div class="hin">
+    <img class="logo" src="logo.svg" alt="CARA Mortgage Services">
+    <div><h1>BMI Underwriting Comparison</h1>
+    <p>Royal London (June 2026) · Aviva (Feb 2025) · LV= (Aug 2025) · Guardian</p></div>
+  </div>
 </header>
 <main>
   <form id="f" class="card" autocomplete="off">
-    <div class="grid">
-      <div style="grid-column:1/-1"><label for="nm">Name (optional)</label><input id="nm" type="text" maxlength="60" placeholder="e.g. Client initials / reference"></div>
-      <div><label for="age">Age</label><input id="age" type="number" min="0" inputmode="numeric"></div>
-      <div><label>Height</label>
-        <div class="toggle"><button type="button" id="hm" class="on" onclick="setH(false)">cm</button><button type="button" id="hi" onclick="setH(true)">ft / in</button></div>
-        <input id="cm" class="hm" type="number" step="0.1" inputmode="decimal" aria-label="Height in cm">
+    <div class="fgrid">
+      <div class="full"><div class="lab"><label for="nm">Name (optional)</label></div><input id="nm" type="text" maxlength="60" placeholder="e.g. client initials or reference"></div>
+      <div><div class="lab"><label for="age">Age</label></div><input id="age" type="number" min="0" inputmode="numeric"></div>
+      <div><div class="lab"><span>Height</span><span class="seg"><button type="button" id="hm" class="on" onclick="setH(false)">cm</button><button type="button" id="hi" onclick="setH(true)">ft / in</button></span></div>
+        <input id="cm" class="hm" type="number" step="0.1" inputmode="decimal" aria-label="Height in cm" placeholder="cm">
         <div class="pair hi" hidden><input id="ft" type="number" placeholder="ft" inputmode="numeric" aria-label="Feet"><input id="in" type="number" step="0.1" placeholder="in" inputmode="decimal" aria-label="Inches"></div></div>
-      <div><label>Weight</label>
-        <div class="toggle"><button type="button" id="wm" class="on" onclick="setW(false)">kg</button><button type="button" id="wi" onclick="setW(true)">st / lb</button></div>
-        <input id="kg" class="wm" type="number" step="0.1" inputmode="decimal" aria-label="Weight in kg">
+      <div><div class="lab"><span>Weight</span><span class="seg"><button type="button" id="wm" class="on" onclick="setW(false)">kg</button><button type="button" id="wi" onclick="setW(true)">st / lb</button></span></div>
+        <input id="kg" class="wm" type="number" step="0.1" inputmode="decimal" aria-label="Weight in kg" placeholder="kg">
         <div class="pair wi" hidden><input id="st" type="number" placeholder="st" inputmode="numeric" aria-label="Stone"><input id="lb" type="number" step="0.1" placeholder="lb" inputmode="decimal" aria-label="Pounds"></div></div>
     </div>
     <button type="submit" class="go">Go</button>
@@ -222,12 +233,26 @@ const colour=c=>c===S?'var(--std)':c===U?'var(--no)':c==='L'?'var(--mid)':(c===T
 let hImp=false,wImp=false;
 const $=id=>document.getElementById(id);
 const num=id=>parseFloat($(id).value)||0;
-function setH(imp){hImp=imp;$('hm').classList.toggle('on',!imp);$('hi').classList.toggle('on',imp);
- document.querySelector('input.hm').hidden=imp;document.querySelector('.pair.hi').hidden=!imp;stale();}
-function setW(imp){wImp=imp;$('wm').classList.toggle('on',!imp);$('wi').classList.toggle('on',imp);
- document.querySelector('input.wm').hidden=imp;document.querySelector('.pair.wi').hidden=!imp;stale();}
-const heightM=()=>hImp?(num('ft')*12+num('in'))*0.0254:num('cm')/100;
-const weightKg=()=>wImp?(num('st')*14+num('lb'))*0.45359237:num('kg');
+let canonH=null,canonW=null,shown=false; // exact values kept while only units are toggled, so conversions don't drift
+const r1=x=>+x.toFixed(1);
+function showH(){const m=hImp,cm=heightM()*100;
+ document.querySelector('input.hm').hidden=m;document.querySelector('.pair.hi').hidden=!m;
+ $('hm').classList.toggle('on',!m);$('hi').classList.toggle('on',m);}
+function fillH(){const m=canonH??(heightM()>0?heightM():null);
+ if(!m){['cm','ft','in'].forEach(k=>$(k).value='');return;}
+ if(hImp){let i=m/0.0254,f=Math.floor(i/12);i=r1(i-f*12);if(i>=12){f++;i=0;}$('ft').value=f;$('in').value=i;}
+ else $('cm').value=r1(m*100);}
+function fillW(){const k=canonW??(weightKg()>0?weightKg():null);
+ if(!k){['kg','st','lb'].forEach(x=>$(x).value='');return;}
+ if(wImp){const lb=k/0.45359237;let st=Math.floor(lb/14),l=r1(lb-st*14);if(l>=14){st++;l=0;}$('st').value=st;$('lb').value=l;}
+ else $('kg').value=r1(k);}
+function setH(imp){if(imp===hImp)return;const m=heightM();canonH=m>0?m:null;hImp=imp;fillH();showH();if(shown)calc();}
+function setW(imp){if(imp===wImp)return;const k=weightKg();canonW=k>0?k:null;wImp=imp;fillW();
+ document.querySelector('input.wm').hidden=imp;document.querySelector('.pair.wi').hidden=!imp;
+ $('wm').classList.toggle('on',!imp);$('wi').classList.toggle('on',imp);if(shown)calc();}
+const heightM=()=>canonH??(hImp?(num('ft')*12+num('in'))*0.0254:num('cm')/100);
+const weightKg=()=>canonW??(wImp?(num('st')*14+num('lb'))*0.45359237:num('kg'));
+const fmtH=m=>{if(!hImp)return r1(m*100)+' cm';let i=m/0.0254,f=Math.floor(i/12);i=r1(i-f*12);if(i>=12){f++;i=0;}return `${f}ft ${i}in`;};
 const roundBMI=raw=>Math.floor(raw+0.5);
 function fmtW(kg){if(!wImp)return kg.toFixed(1)+' kg';const lb=kg/0.45359237,stn=Math.floor(lb/14);return `${stn}st ${(lb-stn*14).toFixed(1)}lb`;}
 function fmtDelta(kg){if(!wImp)return Math.ceil(kg)+' kg';const lb=Math.ceil(kg/0.45359237-1e-9),stn=Math.floor(lb/14);return stn?`${stn}st ${lb-stn*14}lb`:`${lb}lb`;}
@@ -242,30 +267,30 @@ function moves(d,age,raw,h,w,cur){const out=[],r0=Math.round(raw*100);
 
 function calc(){
  const age=parseInt($('age').value),h=heightM(),w=weightKg(),out=$('out');
- if(!(age>0&&h>0&&w>0)){out.innerHTML='<div class="card"><p class="sub">Enter age, height and weight, then press Go.</p></div>';return false;}
+ if(!(age>0&&h>0&&w>0)){shown=false;out.innerHTML='<div class="card"><p class="sub">Enter age, height and weight, then press Go.</p></div>';return false;}
  const raw=w/(h*h),b=roundBMI(raw);
  let summary='',sections='';
  POLICIES.forEach(pol=>{
   const res=PROVIDERS.map(pr=>{const d=pol.p[pr.id];if(!d)return {pr,d:null};const c=get(d,age,raw);return {pr,d,c,r:rank(c)};});
   const avail=res.filter(x=>x.d);const min=Math.min(...avail.map(x=>x.r));
   const best=min<999?avail.filter(x=>x.r===min):[];
-  summary+=`<div class="sumrow"><span class="pol">${pol.name}</span><span class="who">${best.length?`<b>${best.map(x=>x.pr.name).join(' / ')}</b><br>${label(best[0].c)}${best.length>1?' (joint)':''}`:'<b>No provider</b><br>Unable to offer'}</span></div>`;
-  sections+=`<div class="card"><h2>${pol.name}</h2>`;
-  res.forEach((x,i)=>{
+  summary+=`<div class="tile"><div class="pol">${pol.name}</div><div class="who">${best.length?best.map(x=>x.pr.name).join(' / '):'No provider'}</div>${best.length?`<span class="chip" style="background:${colour(best[0].c)}">${label(best[0].c)}</span>${best.length>1?' <span class="sub">(joint)</span>':''}`:'<span class="chip" style="background:var(--no)">Unable to offer</span>'}</div>`;
+  sections+=`<div class="card"><h2>${pol.name}</h2><div class="provs">`;
+  res.forEach(x=>{
    const isBest=best.includes(x);
-   if(!x.d){sections+=`<div class="prow"${i===0?' style="border-top:0"':''}><div class="ph"><span class="pname"><i style="background:${x.pr.dot}"></i>${x.pr.name}</span></div><div class="none">No BMI table in guide for this cover.</div></div>`;return;}
+   if(!x.d){sections+=`<div class="prow"><div class="ph"><span class="pname"><i style="background:${x.pr.dot}"></i>${x.pr.name}</span></div><div class="none">No BMI table in guide for this cover.</div></div>`;return;}
    const note=x.d.note(b,x.c,raw);
-   sections+=`<div class="prow${isBest?' best':''}"${i===0&&!isBest?' style="border-top:0"':''}>
+   sections+=`<div class="prow${isBest?' best':''}">
     <div class="ph"><span class="pname"><i style="background:${x.pr.dot}"></i>${x.pr.name}${x.d.label?` <span class="sub">${x.d.label}</span>`:''}${isBest?' <span class="badge">Best</span>':''}</span>
     <span class="chip" style="background:${colour(x.c)}">${label(x.c)}</span></div>
     ${moves(x.d,age,raw,h,w,x.c)}${note?`<div class="flag">⚠ ${note}</div>`:''}</div>`;
   });
-  sections+='</div>';
+  sections+='</div></div>';
  });
- out.innerHTML=`<div class="card"><div class="bmi">BMI ${raw.toFixed(2)}</div>
-  <div class="sub">Rounded for underwriting: <b>${b}</b><br>Height ${(h*100).toFixed(1)} cm, weight ${fmtW(w)}, age ${age}</div></div>
-  <div class="card"><h2>Best provider</h2>${summary}</div>${sections}`;
- return true;
+ out.innerHTML=`<div class="card hero"><div class="big"><small>BMI</small>${raw.toFixed(2)}</div>
+  <div class="meta">Rounded for underwriting: <b>${b}</b><br>Age <b>${age}</b> · Height <b>${fmtH(h)}</b> · Weight <b>${fmtW(w)}</b></div></div>
+  <div class="card"><h2>Best provider</h2><div class="tiles">${summary}</div></div>${sections}`;
+ shown=true;return true;
 }
 
 // ---------- Saved entries (stored in this browser only) ----------
@@ -280,17 +305,18 @@ function describe(e){const v=e.v;return `Age ${v.age}, ${e.hImp?`${v.ft||0}ft ${
 function renderHist(){
  const el=$('hist');
  if(!entries.length){el.innerHTML='';return;}
- el.innerHTML=`<div class="card"><div class="hhead"><h2 style="margin:0">Saved entries</h2><button type="button" class="small del" data-act="clear">Clear all</button></div>`+
+ const open=el.querySelector('details')?.open;
+ el.innerHTML=`<details class="card"${open?' open':''}><summary>Saved entries (${entries.length})</summary><div class="hlist">`+
   entries.map(e=>`<div class="hrow" data-id="${e.id}"><input type="text" maxlength="60" value="${esc(e.name)}" aria-label="Entry name" data-act="rename">
    <div class="hmeta">${fmtTime(e.time)} · ${esc(describe(e))} · BMI ${e.bmi.toFixed(2)}</div>
-   <div class="hbtns"><button type="button" class="small" data-act="load">Load</button><button type="button" class="small del" data-act="del">Delete</button></div></div>`).join('')+`</div>`;
+   <div class="hbtns"><button type="button" class="small" data-act="load">Load</button><button type="button" class="small del" data-act="del">Delete</button></div></div>`).join('')+`</div><div style="margin-top:12px"><button type="button" class="small del" data-act="clear">Clear all</button></div></details>`;
 }
 $('hist').addEventListener('click',ev=>{
  const act=ev.target.dataset.act;if(!act)return;
  const row=ev.target.closest('.hrow'),e=row&&entries.find(x=>x.id==row.dataset.id);
  if(act==='clear'){if(confirm('Delete all saved entries?')){entries=[];persist();renderHist();}}
  else if(act==='del'&&e){entries=entries.filter(x=>x!==e);persist();renderHist();}
- else if(act==='load'&&e){setH(!!(e.hImp??e.imperial));setW(!!(e.wImp??e.imperial));FIELDS.forEach(k=>$(k).value=e.v[k]??'');$('nm').value=e.name;calc();window.scrollTo({top:0,behavior:'smooth'});}
+ else if(act==='load'&&e){canonH=canonW=null;hImp=!!(e.hImp??e.imperial);wImp=!!(e.wImp??e.imperial);$('wm').classList.toggle('on',!wImp);$('wi').classList.toggle('on',wImp);document.querySelector('input.wm').hidden=wImp;document.querySelector('.pair.wi').hidden=!wImp;showH();FIELDS.forEach(k=>$(k).value=e.v[k]??'');$('nm').value=e.name;calc();window.scrollTo({top:0,behavior:'smooth'});}
 });
 $('hist').addEventListener('change',ev=>{
  if(ev.target.dataset.act!=='rename')return;
@@ -306,8 +332,9 @@ $('f').addEventListener('submit',ev=>{
  persist();renderHist();
 });
 // Results only update when Go is pressed; editing a field clears the old result
-function stale(){$('out').innerHTML='<div class="card"><p class="sub">Inputs changed. Press Go to compare providers.</p></div>';}
-document.querySelectorAll('#f input').forEach(el=>el.addEventListener('input',stale));
+function stale(){shown=false;$('out').innerHTML='<div class="card"><p class="sub">Inputs changed. Press Go to compare providers.</p></div>';}
+document.querySelectorAll('#f input').forEach(el=>el.addEventListener('input',()=>{
+ if(['cm','ft','in'].includes(el.id))canonH=null;if(['kg','st','lb'].includes(el.id))canonW=null;stale();}));
 renderHist();
 </script>
 </body>
