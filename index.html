@@ -356,7 +356,6 @@
         <input type="file" id="exFile" accept="image/*,application/pdf" multiple hidden>
       </div>
       <ul class="scanfiles" id="exFiles"></ul>
-      <div data-reader></div>
       <div class="tools"><button type="button" class="primary" id="exGo" disabled>Read cover</button></div>
       <p class="hint" id="exMsg" aria-live="polite"></p>
       <div id="exKeyRow" class="hidden" style="margin-top:12px">
@@ -412,7 +411,6 @@
         <input type="file" id="qFile" accept="image/*,application/pdf" multiple hidden>
       </div>
       <ul class="scanfiles" id="qFiles"></ul>
-      <div data-reader></div>
       <div class="tools"><button type="button" class="primary" id="qGo" disabled>Read quotes</button><button type="button" class="linkbtn" id="qKeyChange">Change API key</button></div>
       <p class="hint" id="qMsg" aria-live="polite"></p>
       <div id="qKeyRow" class="hidden" style="margin-top:12px">
@@ -895,6 +893,7 @@ window.setH=setH;window.setW=setW;
 const KEY = "cara-hub-reader-v1";
 const DEF = {mode: "claude", url: "http://localhost:11434", model: "qwen2.5vl:7b"};
 let R = {...DEF}; try { R = {...DEF, ...JSON.parse(localStorage.getItem(KEY) || "{}")}; } catch (e) {}
+R.mode = "claude";
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(R)); } catch (e) {} };
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 /* how long reads take on this computer: seconds per character of input, per model, learned from earlier reads so a percentage can be shown */
