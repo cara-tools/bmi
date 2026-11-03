@@ -412,6 +412,7 @@
 
     <section id="exPols" hidden>
       <div class="head"><span data-n="02">Policies</span><span>Check and edit the details</span></div>
+      <div class="tools" style="margin:0 0 12px"><button type="button" class="linkbtn" id="exRemoveAll">Remove all policies</button></div>
       <div id="exList"></div>
     </section>
 
@@ -1034,7 +1035,7 @@ document.addEventListener("click", e => { const b = e.target.closest("[data-rd-c
 /* shows "Reading… 2:15" while a read is running; it stops itself when the message is replaced */
 let STEP = "";
 function timer(msg){
-  const t0 = Date.now(); P = {}; STEP = "";
+  const t0 = Date.now(); P = {}; STEP = ""; CARA_AI.reset();
   const tick = () => {
     if (!/^Reading/.test(msg.textContent)) return clearInterval(id);
     const sec = Math.round((Date.now() - t0) / 1000), local = R.mode === "local";
@@ -1049,6 +1050,22 @@ const MODELS = [["claude-sonnet-5-5", "Claude Sonnet 5.5 (default)"], ["claude-o
 const CARA_AI = {
   key(){ try { const k = JSON.parse(localStorage.getItem(KCFG) || "{}").apiKey || JSON.parse(localStorage.getItem("cara-guide-settings-v1") || "{}").apiKey; return String(k || "").trim(); } catch (e) { return ""; } },
   model(){ try { return localStorage.getItem(KMODEL) || DEFMODEL; } catch (e) { return DEFMODEL; } },
+  /* what a read costs: tokens used x the model's price (dollars per million tokens, as of Oct 2026; Haiku costs more above 100K input tokens) */
+  PRICE: {"claude-sonnet-5-5": [2, 10], "claude-opus-5-5": [4, 20], "claude-haiku-5-5": [0.1, 0.5, 0.5, 2.5], "claude-fable-5-1": [10, 50]},
+  USD_GBP: 0.75,   /* dollars to pounds (3 Nov 2026: 0.746); Anthropic bills in dollars, so this is an estimate */
+  used: {cost: 0, inT: 0, outT: 0, known: true},
+  reset(){ this.used = {cost: 0, inT: 0, outT: 0, known: true}; },
+  add(u){
+    if (!u) return;
+    const p = this.PRICE[this.model()], i = (u.input_tokens || 0) + (u.cache_creation_input_tokens || 0) + (u.cache_read_input_tokens || 0), o = u.output_tokens || 0;
+    this.used.inT += i; this.used.outT += o;
+    if (!p) this.used.known = false; else { const big = p.length > 2 && i > 100000; this.used.cost += (i * p[big ? 2 : 0] + o * p[big ? 3 : 1]) / 1e6; }
+  },
+  cost(){
+    const u = this.used; if (!u.inT && !u.outT) return "";
+    const gbp = u.cost * this.USD_GBP, c = gbp < 0.01 ? "under 1p" : gbp < 1 ? `about ${Math.max(1, Math.round(gbp * 100))}p` : `about £${gbp.toFixed(2)}`;
+    return ` Cost: ${u.known ? c : "unknown for this model"} (${u.inT.toLocaleString("en-GB")} tokens in, ${u.outT.toLocaleString("en-GB")} out).`;
+  },
   open(msg){ const d = document.getElementById("aiDlg"); if (!d) return; fill(); document.getElementById("aiMsg").textContent = msg || ""; if (!d.open) d.showModal(); document.getElementById("aiKey").focus(); }
 };
 function fill(){
@@ -1069,6 +1086,13 @@ function fill(){
   });
 })();
 window.CARA_AI = CARA_AI;
+/* a word gets its capital once you've finished it (space or hyphen), and the last word when you leave the box; the rest is left alone, so McGill stays McGill */
+window.capName = (el, final) => {
+  const a = el.selectionStart, b = el.selectionEnd, SEP = "\\s\\-'\u2019";
+  const v = el.value.replace(new RegExp(`(^|[${SEP}])([a-z])(?=[^${SEP}]*${final ? "" : `[${SEP}]`})`, "g"), (m, p, c) => p + c.toUpperCase());
+  if (v === el.value) return;
+  el.value = v; try { el.setSelectionRange(a, b); } catch (e) {}
+};
 window.CARA_LOCAL = {on: () => R.mode === "local", read, text: pdfText, timer, step: t => { STEP = t; }, name: () => R.model};
 mount();
 })();
@@ -1460,6 +1484,7 @@ async function scanRead(files){
     body:JSON.stringify({model:CARA_AI.model(), max_tokens:4096, tools:[SCAN_TOOL], messages:[{role:"user", content:[...blocks, {type:"text", text:prompt}]}]})});
   if (!resp.ok){ const j = await resp.json().catch(() => ({})); throw new Error((j.error && j.error.message) || `The request failed (${resp.status}).`); }
   const j = await resp.json(), tu = (j.content || []).find(c => c.type === "tool_use");
+  CARA_AI.add(j.usage);
   return (tu && tu.input && tu.input.policies) || [];
 }
 function scanWho(r){
@@ -1652,6 +1677,7 @@ root.addEventListener("input", e => {
   const t = e.target;
   const p = t.dataset.p; if (!p) return;
   if (t.type === "radio" && !t.checked) return;
+  if (/^a\.\d\.name$/.test(p)) capName(t, false);
   if (t.hasAttribute("data-date")){
     fmtDateInput(t, e.inputType);
     set(p, parseUK(t.value));
@@ -1669,6 +1695,7 @@ root.addEventListener("input", e => {
 });
 root.addEventListener("change", e => {
   const t = e.target, p = t.dataset.p; if (!p) return;
+  if (/^a\.\d\.name$/.test(p)){ capName(t, true); set(p, t.value); }
   if (t.hasAttribute("data-re")){
     if (t.type === "radio" && !t.checked) return;
     set(p, t.value);
@@ -1693,6 +1720,11 @@ root.addEventListener("click", e => {
   else if (b.dataset.edit){ S.ex[+b.dataset.edit.split(".")[1]].done = false; }
   else { S.ex[+b.dataset.save.split(".")[1]].done = true; }
   save(); renderPols(); reveal();
+});
+$e("exRemoveAll").addEventListener("click", () => {
+  if (!S.ex.length) return;
+  if (!confirm(`Remove all ${S.ex.length} polic${S.ex.length === 1 ? "y" : "ies"}? This can't be undone.`)) return;
+  S.ex = []; save(); renderPols(); reveal();
 });
 $e("exAdd").addEventListener("click", () => { S.ex.push(policy("life")); save(); renderPols(); reveal(); const c = $e("exList").querySelectorAll(".pol"); if (c.length) c[c.length - 1].scrollIntoView({behavior: "smooth", block: "center"}); });
 $e("exClearTop").addEventListener("click", () => {
@@ -1757,7 +1789,7 @@ function scanAddFiles(list){
     go.disabled = true; msg.textContent = "Reading…"; CARA_LOCAL.timer(msg);
     try {
       const found = await scanRead(scanFiles);
-      if (!found.length){ msg.textContent = "No policies were found. Try a clearer screenshot."; go.disabled = !scanFiles.length; return; }
+      if (!found.length){ msg.textContent = `No policies were found (read with ${CARA_AI.model()}). Try a clearer screenshot, or pick a stronger model in the cog at the top.` + CARA_AI.cost(); go.disabled = !scanFiles.length; return; }
       const odd = [];
       found.forEach(r => {
         const p = scanToPolicy(r); p.who = scanWho(r); relinkOne(p); S.ex.push(p);
@@ -1765,7 +1797,7 @@ function scanAddFiles(list){
         if (n && !r.joint && !ppl().some(i => { const a = S.a[i].name.trim().toLowerCase(), d = n.toLowerCase(); return a && (d.includes(a) || a.includes(d) || d.split(/\s+/)[0] === a.split(/\s+/)[0]); })) odd.push(n);
       });
       scanFiles = []; scanList(); save(); renderPols(); reveal();
-      msg.textContent = `Added ${found.length} polic${found.length === 1 ? "y" : "ies"}. Check the details below.` + (odd.length ? ` The document names “${[...new Set(odd)].join("”, “")}”: check who each is for.` : "");
+      msg.textContent = `Added ${found.length} polic${found.length === 1 ? "y" : "ies"}. Check the details below.` + (odd.length ? ` The document names “${[...new Set(odd)].join("”, “")}”: check who each is for.` : "") + CARA_AI.cost();
       $e("exPols").scrollIntoView({behavior: "smooth"});
     } catch (err){
       msg.textContent = "That didn't work: " + (err && err.message || "unknown error") + (/Failed to fetch/i.test(err && err.message) ? " Check you're online." : "");
@@ -2070,10 +2102,12 @@ function pairsFor(p){
 /* ---------- events ---------- */
 root.addEventListener("input", e => {
   const t = e.target, p = t.dataset.p; if (!p) return;
+  if (/^a\.\d\.name$/.test(p)) capName(t, false);
   set(p, t.value); save(); reveal();
 });
 root.addEventListener("change", e => {
   const t = e.target, p = t.dataset.p; if (!p) return;
+  if (/^a\.\d\.name$/.test(p)) capName(t, true);
   set(p, t.value);
   if (/^q\.\d+\.extra$/.test(p)){ const x = S.q[+p.split(".")[1]]; x.ratePct = ""; x.rateExp = ""; x.rateWho = ""; }
   if (p === "joint"){ S.q.forEach(x => { if (S.joint !== "2" && x.who !== "0") x.who = "0"; }); renderClient(); }
@@ -2242,6 +2276,7 @@ async function scanReadOne(files){
     body:JSON.stringify({model:CARA_AI.model(), max_tokens:8192, tools:[SCAN_TOOL], messages:[{role:"user", content:[...blocks, {type:"text", text:prompt}]}]})});
   if (!resp.ok){ const j = await resp.json().catch(() => ({})); throw new Error((j.error && j.error.message) || `The request failed (${resp.status}).`); }
   const j = await resp.json(), tu = (j.content || []).find(c => c.type === "tool_use");
+  CARA_AI.add(j.usage);
   return (tu && tu.input) || {};
 }
 /* when a PDF doesn't say whether life and critical illness pay together or one or the other, ask */
@@ -2361,7 +2396,7 @@ function scanAdd(list){
     try {
       const res = await scanRead(scanFiles), found = res.quotes || [];
       const failedMsg = (res.failed || []).length ? ` Couldn't read ${res.failed.map(f => f.name).join(", ")}: ${res.failed[0].error}` : "";
-      if (!found.length){ msg.textContent = "No quotes were found. Try a clearer screenshot." + failedMsg; go.disabled = !scanFiles.length; return; }
+      if (!found.length){ msg.textContent = `No quotes were found (read with ${CARA_AI.model()}). Try a clearer screenshot, or pick a stronger model in the cog at the top.` + CARA_AI.cost() + failedMsg; go.disabled = !scanFiles.length; return; }
       const added = [];
       for (const r of found){ const p = scanToPolicy(r); p.who = scanWho(r); if (p.ask){ delete p.ask; applyCover(p, await askCover(p)); } S.q.push(p); added.push(p); }
       /* the plan charge is stated in the text rather than as a cover */
@@ -2372,7 +2407,7 @@ function scanAdd(list){
       else if (tot - covers > 0.005 && tot - covers < 20) S.charge = String(Math.round((tot - covers) * 100) / 100);
       const sum = covers + chargeAmt();
       scanFiles = []; scanList(); save(); renderList(); renderCharge(); reveal();
-      msg.textContent = `Added ${added.length} quote${added.length === 1 ? "" : "s"}${chargeAmt() ? ` and a ${gbpp(chargeAmt())} policy charge` : ""}. Check the details below.` + failedMsg + (tot && Math.abs(sum - tot) > 0.005 ? ` The premiums add up to ${gbpp(sum)} but the document says ${gbpp(tot)}, so something is missing or wrong.` : "");
+      msg.textContent = `Added ${added.length} quote${added.length === 1 ? "" : "s"}. Check the details below.` + failedMsg + (tot && Math.abs(sum - tot) > 0.005 ? ` The premiums add up to ${gbpp(sum)} but the document says ${gbpp(tot)}, so something is missing or wrong.` : "") + CARA_AI.cost();
       $q("qList").scrollIntoView({behavior:"smooth"});
     } catch (err){
       msg.textContent = "That didn't work: " + (err && err.message || "unknown error") + (/Failed to fetch/i.test(err && err.message) ? " Check you're online." : "");
