@@ -1673,6 +1673,12 @@ function fmtDateInput(el, inputType){
   else if (d.length === 2 && !/^delete/.test(inputType || "")) out = d + "/";
   el.value = out;
 }
+/* a two-digit birth year gets its century when you leave the box: 94 is 1994, and anything up to this year's two digits is 20xx (nobody here was born before 1926) */
+function expandDobYear(v){
+  const m = /^\s*(\d{1,2})[\/.\-\s]+(\d{1,2})[\/.\-\s]+(\d{2})\s*$/.exec(v); if (!m) return v;
+  const yy = +m[3], cur = new Date().getFullYear() % 100;
+  return `${m[1].padStart(2, "0")}/${m[2].padStart(2, "0")}/${yy <= cur ? 2000 + yy : 1900 + yy}`;
+}
 root.addEventListener("input", e => {
   const t = e.target;
   const p = t.dataset.p; if (!p) return;
@@ -1696,6 +1702,7 @@ root.addEventListener("input", e => {
 root.addEventListener("change", e => {
   const t = e.target, p = t.dataset.p; if (!p) return;
   if (/^a\.\d\.name$/.test(p)){ capName(t, true); set(p, t.value); }
+  if (/^a\.\d\.dob$/.test(p)){ const v = expandDobYear(t.value); if (v !== t.value){ t.value = v; t.dispatchEvent(new Event("input", {bubbles: true})); } }
   if (t.hasAttribute("data-re")){
     if (t.type === "radio" && !t.checked) return;
     set(p, t.value);
